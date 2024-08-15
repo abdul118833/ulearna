@@ -1,5 +1,8 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
+
+const API_KEY = "7dfc83b25f784955129de12440079692";
+const API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
 const useWeather = (initialCities) => {
   const [weatherData, setWeatherData] = useState({});
@@ -12,16 +15,13 @@ const useWeather = (initialCities) => {
 
     for (const city of citiesArray) {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_WEATHER_API_URL}`,
-          {
-            params: {
-              q: city,
-              units: "metric",
-              appid: process.env.NEXT_PUBLIC_WEATHER_API_KEY,
-            },
-          }
-        );
+        const response = await axios.get(`${API_URL}`, {
+          params: {
+            q: city,
+            units: "metric",
+            appid: API_KEY,
+          },
+        });
 
         const { temp, humidity } = response.data.main;
         const wind = response.data.wind.speed;
