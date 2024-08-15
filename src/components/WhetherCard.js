@@ -4,7 +4,7 @@ const WeatherCard = ({ city, weatherData }) => {
   return (
     <div className="p-6 m-4 bg-gradient-to-b from-gray-800 to-gray-700 text-white rounded-xl shadow-lg transition-transform transform hover:scale-105 hover:shadow-2xl hover:bg-gradient-to-b hover:from-gray-700/60 hover:to-gray-600/90">
       <div className="flex flex-col items-center">
-        <h2 className="text-3xl font-bold mb-2">{city}</h2>
+        <h2 className="text-3xl font-bold mb-2 lowercase first-letter:uppercase">{city}</h2>
         <img
           src={`http://openweathermap.org/img/wn/${weatherData.icon}@2x.png`}
           alt="Weather icon"
