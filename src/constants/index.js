@@ -1,0 +1,1 @@
+export const initialCities = ["Dubai", "New York", "London", "Tokyo", "Sydney"];
