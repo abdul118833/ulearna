@@ -20,7 +20,7 @@ const Searchbar = ({
         <div className="w-full md:w-auto flex">
           <button
             onClick={handleSearch}
-            className="w-full md:w-auto mr-2 md:mr-0 mt-2 md:mt-0 md:ml-2 p-3 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition duration-200 ease-in-out"
+            className="w-full md:w-auto mr-2 md:mr-0 mt-2 md:mt-0 md:ml-2 p-3 px-5 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition duration-200 ease-in-out"
             disabled={loading}
           >
             Search

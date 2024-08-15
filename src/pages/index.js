@@ -1,37 +1,83 @@
-import React, { useEffect, useState } from "react";
-import WeatherCard from "@/components/WhetherCard";
-import useWeather from "@/hooks/useWhether";
-import { initialCities } from "@/constants";
-import Searchbar from "@/components/Searchbar";
 import Loader from "@/components/Loader";
+import Modal from "@/components/Modal";
+import Searchbar from "@/components/Searchbar";
+import WeatherCard from "@/components/WhetherCard";
+import { initialCities } from "@/constants";
+import useWeather from "@/hooks/useWhether";
+import React, { useEffect, useState } from "react";
 
 const WeatherDashboard = () => {
-  const { weatherData, cities, loading, fetchWeatherForCities, setCities } =
-    useWeather(initialCities); // Use the custom hook
-
+  const [favorites, setFavorites] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState(null);
 
-  // Function to handle search for a single city
+  const { weatherData, cities, loading, fetchWeatherForCities, setCities } =
+    useWeather(initialCities);
+
+  const toggleFavorite = (city) => {
+    const updatedFavorites = { ...favorites };
+
+    if (updatedFavorites[city]) {
+      delete updatedFavorites[city];
+    } else {
+      updatedFavorites[city] = weatherData[city];
+    }
+
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  };
+
   const handleSearch = async () => {
     if (searchQuery.trim()) {
       await fetchWeatherForCities([searchQuery.trim()]);
-      setSearchQuery(""); // Clear the input after searching
+      setSearchQuery("");
     }
   };
 
-  // Function to fetch data for default cities
   const fetchDefaultCities = async () => {
     await fetchWeatherForCities(initialCities);
   };
 
-  // Function for resetting to default
   const handleReset = () => {
-    setCities(initialCities); // Reset cities to initial list
-    setSearchQuery(""); // Clear the search input after searching
+    setCities(initialCities);
+    setSearchQuery("");
     fetchDefaultCities();
   };
 
-  // Search bar component props
+  const openModal = (city) => {
+    setModalData(weatherData[city]);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalData(null);
+  };
+
+  const favoriteCities = Object.keys(favorites).map((city) => ({
+    city,
+    data: favorites[city],
+  }));
+
+  const otherCities = cities
+    .filter((city) => !favorites[city])
+    .map((city) => ({
+      city,
+      data: weatherData[city] || {},
+    }));
+
+  useEffect(() => {
+    fetchDefaultCities();
+  }, []);
+
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites"));
+    if (storedFavorites) {
+      setFavorites(storedFavorites);
+    }
+  }, []);
+
   const searchBarProps = {
     searchQuery,
     setSearchQuery,
@@ -40,11 +86,6 @@ const WeatherDashboard = () => {
     loading,
   };
 
-  // Hooks for calling default cities weather data
-  useEffect(() => {
-    fetchDefaultCities();
-  }, []);
-
   return (
     <div className="w-[100vw] h-[100vh] overflow-auto">
       <div className="container mx-auto">
@@ -52,21 +93,49 @@ const WeatherDashboard = () => {
           Weather Dashboard
         </h1>
         <Searchbar {...searchBarProps} />
+
+        {favoriteCities.length > 0 && (
+          <p className="mx-4 text-2xl font-bold text-white">Favorites</p>
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {favoriteCities.map(({ city, data }) => (
+            <WeatherCard
+              key={city}
+              city={city}
+              weatherData={data}
+              isFavorite={!!favorites[city]}
+              toggleFavorite={toggleFavorite}
+              onClick={() => openModal(city)} // Open modal on click
+            />
+          ))}
+        </div>
+
+        <p className="mx-4 text-2xl font-bold text-white">All Cities</p>
+
         {loading ? (
           <Loader />
-        ) : cities.length > 0 ? (
+        ) : otherCities.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {cities.map((city) => (
+            {otherCities.map(({ city, data }) => (
               <WeatherCard
                 key={city}
                 city={city}
-                weatherData={weatherData[city] || {}}
+                weatherData={data}
+                isFavorite={!!favorites[city]}
+                toggleFavorite={toggleFavorite}
+                onClick={() => openModal(city)} // Open modal on click
               />
             ))}
           </div>
         ) : (
-          <p className="text-center font-bold text-white">No Data Found</p>
+          <p className="text-center font-bold text-white mt-4">No Data Found</p>
         )}
+
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          weatherData={modalData}
+        />
       </div>
     </div>
   );
