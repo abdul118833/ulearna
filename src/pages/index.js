@@ -46,7 +46,7 @@ const WeatherDashboard = () => {
   };
 
   const openModal = (city) => {
-    setModalData(weatherData[city]);
+    setModalData({ ...weatherData[city], city });
     setIsModalOpen(true);
   };
 

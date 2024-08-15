@@ -1,18 +1,10 @@
+import { formatTimestamp } from "@/constants";
 import React from "react";
 
-const formatTimestamp = (timestamp) => {
-  if (!timestamp) return "N/A";
-  try {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString();
-  } catch (error) {
-    return "Invalid time";
-  }
-};
 
 const Modal = ({ isOpen, onClose, weatherData }) => {
   if (!isOpen) return null;
-
+console.log(weatherData,"weatherData")
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 transition-opacity duration-300 ${
