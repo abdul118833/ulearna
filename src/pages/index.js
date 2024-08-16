@@ -2,8 +2,8 @@ import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
 import Searchbar from "@/components/Searchbar";
 import WeatherCard from "@/components/WhetherCard";
-import { initialCities } from "@/constants";
 import useWeather from "@/hooks/useWhether";
+import { initialCities } from "@/utils";
 import React, { useEffect, useState } from "react";
 
 const WeatherDashboard = () => {
@@ -101,6 +101,7 @@ const WeatherDashboard = () => {
         <h1 className="text-4xl font-bold text-center my-8 text-white">
           Weather Dashboard
         </h1>
+        {/* Search bat */}
         <Searchbar {...searchBarProps} />
 
         {favoriteCities.length > 0 && (
@@ -139,7 +140,7 @@ const WeatherDashboard = () => {
         ) : (
           <p className="text-center font-bold text-white mt-4">No Data Found</p>
         )}
-
+        {/* Modals for Showing Details of Cities */}
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}

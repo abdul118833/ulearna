@@ -1,4 +1,4 @@
-import { formatTimestamp } from "@/constants";
+import { formatTimestamp } from "@/utils";
 import React from "react";
 
 
