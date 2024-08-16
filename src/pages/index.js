@@ -15,9 +15,9 @@ const WeatherDashboard = () => {
   const { weatherData, cities, loading, fetchWeatherForCities, setCities } =
     useWeather(initialCities);
 
+  // Add to Favorites / Remove from Favorites
   const toggleFavorite = (city) => {
     const updatedFavorites = { ...favorites };
-
     if (updatedFavorites[city]) {
       delete updatedFavorites[city];
     } else {
@@ -28,49 +28,57 @@ const WeatherDashboard = () => {
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
+  // Search City Name Function Handler
   const handleSearch = async () => {
     if (searchQuery.trim()) {
       await fetchWeatherForCities([searchQuery.trim()]);
-      setSearchQuery("");
     }
   };
 
-  const fetchDefaultCities = async () => {
-    await fetchWeatherForCities(initialCities);
-  };
-
+  // Function for Reseting to Default State
   const handleReset = () => {
     setCities(initialCities);
     setSearchQuery("");
     fetchDefaultCities();
   };
 
+  // For Opening Details Modal
   const openModal = (city) => {
     setModalData({ ...weatherData[city], city });
     setIsModalOpen(true);
   };
 
+  // For Closing Details Modal
   const closeModal = () => {
     setIsModalOpen(false);
     setModalData(null);
   };
 
+  // Favorite Cities
   const favoriteCities = Object.keys(favorites).map((city) => ({
     city,
     data: favorites[city],
   }));
 
-  const otherCities = cities
+  // All Cities // Also if a city present Favrites then it will not show in All Cities
+  const allCities = cities
     .filter((city) => !favorites[city])
     .map((city) => ({
       city,
       data: weatherData[city] || {},
     }));
 
+  // Fetch Whether for Defalut Cities
+  const fetchDefaultCities = async () => {
+    await fetchWeatherForCities(initialCities);
+  };
+
+  // First Time Api Call for Getting Data of Defalut Cities
   useEffect(() => {
     fetchDefaultCities();
   }, []);
 
+  // Getting Favorites Cities from Persist State
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem("favorites"));
     if (storedFavorites) {
@@ -78,6 +86,7 @@ const WeatherDashboard = () => {
     }
   }, []);
 
+  // Searchbar Component Props
   const searchBarProps = {
     searchQuery,
     setSearchQuery,
@@ -114,9 +123,9 @@ const WeatherDashboard = () => {
 
         {loading ? (
           <Loader />
-        ) : otherCities.length > 0 ? (
+        ) : allCities.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {otherCities.map(({ city, data }) => (
+            {allCities.map(({ city, data }) => (
               <WeatherCard
                 key={city}
                 city={city}

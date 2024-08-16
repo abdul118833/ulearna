@@ -10,7 +10,7 @@ const WeatherCard = ({ city, weatherData, isFavorite, toggleFavorite, onClick })
         <button
           className="text-yellow-400 hover:text-yellow-300"
           onClick={(e) => {
-            e.stopPropagation();  // Prevent click event from triggering parent click
+            e.stopPropagation();  // Prevent click event from triggering parent click because we are also showing the Details Upon Click
             toggleFavorite(city);
           }}
         >

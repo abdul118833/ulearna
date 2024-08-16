@@ -23,15 +23,27 @@ const useWeather = (initialCities) => {
           },
         });
 
-        const { temp, humidity } = response.data.main;
+        const { temp, humidity, pressure } = response.data.main;
         const wind = response.data.wind.speed;
         const condition = response.data.weather[0].main;
         const icon = response.data.weather[0].icon;
+        const visibility = response.data.visibility;
+        const { sunrise, sunset } = response.data.sys;
 
         // Add the city to the weatherData state and the validCities array
         setWeatherData((prevState) => ({
           ...prevState,
-          [city]: { temp, humidity, wind, condition, icon },
+          [city]: {
+            temp,
+            humidity,
+            wind,
+            condition,
+            icon,
+            visibility,
+            sunrise,
+            sunset,
+            pressure,
+          },
         }));
         validCities.push(city);
       } catch (error) {
